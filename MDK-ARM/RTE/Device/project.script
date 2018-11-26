@@ -1,0 +1,4 @@
+load STM32F071CB 
+project name STCubeGenerated 
+project toolchain "MDK-ARM V5" 
+project path "D:\Ёлектроника\Projects\Programs\Voltage Relay_sens\MDK-ARM\RTE\Device\STM32F071CB\" 

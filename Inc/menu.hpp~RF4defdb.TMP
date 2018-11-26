@@ -1,0 +1,118 @@
+#ifndef MENU_H
+#define MENU_H
+
+
+#include "Screen.h"
+#include "keyboard.h"
+#include <stddef.h>
+#include <stdarg.h>
+
+extern Screen scr;
+
+
+class Menu_Base
+{
+	public:
+		Menu_Base (const char* _text): text(_text){}
+		virtual Menu_Base& action() = 0; 
+		virtual void menu_scr() = 0;
+	public:
+		const char* text;
+};
+
+
+//------------------------------------------
+//Tree-like menu item
+//------------------------------------------
+
+
+/*class Menu_item:public Menu_Base
+{
+	public:
+		
+		//constructor
+		Menu_item(const char* text,keyboard& _t_keys,uint8_t _size,...):Menu_Base(text),t_keys(&_t_keys),size(_size)
+		{
+			va_list args;
+			va_start(args,_size);
+			ptr_b = new Menu_Base* [size];// qt of menus
+			for (uint8_t i = 0; i <= size;i++)
+				*(ptr+i) = va_arg(args,Menu_Base*); 
+			ptr = ptr_b;
+		}
+		
+		//virtual fucntions
+		virtual void menu_scr();
+		virtual Menu_Base& action();
+		
+		
+		~Menu_item()
+		{
+			delete [] ptr_b;
+		}
+	private:
+		keyboard* t_keys;
+		Menu_Base** ptr_b; // pointer to the first element in srray
+		Menu_Base** ptr;// pointer to running element of array
+		uint8_t size;
+};*/
+
+
+
+//------------------------------------------
+//Menu item for reading data
+//------------------------------------------
+
+
+template <typename T>class Menu_data:public Menu_Base
+{
+	public:
+		
+		//constructor
+		Menu_data(const char* text,keyboard& _t_keys,Menu_Base* p,T* d):Menu_Base(text),t_keys(&_t_keys),parent(p),data(d){}
+			
+		//virtual fucntions
+		virtual Menu_Base& action();
+		virtual void menu_scr(){scr << *data;}	
+	private:
+		keyboard* t_keys;
+		Menu_Base* parent;
+		T* data;
+		
+};
+
+
+//------------------------------------------
+//Menu item for r/w data
+//------------------------------------------
+
+
+template <typename T> class Menu_ch_data:public Menu_Base
+{
+	public:
+
+		//constructor
+		Menu_ch_data(const char* text,keyboard& _t_keys,Menu_Base* p,T* d):Menu_Base(text),t_keys(&_t_keys),parent(p), data(d){}
+			
+		//virtual fucntions
+		virtual Menu_Base& action();
+		virtual void menu_scr();
+			
+		//member functions
+		void change_data();
+	private:
+		keyboard* t_keys;
+		enum {NOACTION,CH_ENABLE,SAVE,CANCEL} state; // states
+		Menu_Base* parent;
+		T* data;
+		T* data_copy;
+};
+
+
+
+
+void do_Menu();
+
+#endif 
+
+
